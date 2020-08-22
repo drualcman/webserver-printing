@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "WerServer": {
+      "commandName": "Project",
+      "nativeDebugging": false
+    }
+  }
+}
