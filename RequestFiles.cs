@@ -49,5 +49,26 @@ namespace WerServer
             }
             return result;
         }
+
+        public async Task<bool> PrintStream(string printerName, IPrinter printer, int pagecount)
+        {
+            bool result;
+            using (HttpClient client = new HttpClient())
+            {
+                using (HttpResponseMessage responseClient = await client.GetAsync(this.Url))
+                {
+                    if (responseClient.IsSuccessStatusCode)
+                    {
+                        Stream streamFile = await responseClient.Content.ReadAsStreamAsync();
+                        printer.PrintRawStream(printerName, streamFile, "Web Server Raw Print");
+                        Console.WriteLine($"printed stream data from {this.Url}...");
+                        result = true;
+                    }
+                    else
+                        result = false;
+                }
+            }
+            return result;
+        }
     }
 }

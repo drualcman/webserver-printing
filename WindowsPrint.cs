@@ -15,6 +15,7 @@ namespace WerServer
         private IPrinter Printer = new Printer();
         private bool disposedValue;
         private string PrinterName;
+        private int Count;
 
         public Uri Url { get; set; }
         public string FilePath { get; set; }
@@ -58,6 +59,14 @@ namespace WerServer
             {
                 this.FilePath = string.Empty;
             }
+            try
+            {
+                this.Count = Convert.ToInt32(requestData.Find(x => x.Variable.ToLower() == "count").Valor);
+            }
+            catch
+            {
+                this.Count = 1;
+            }
         }
 
         public void SetUrl(string url)
@@ -75,19 +84,29 @@ namespace WerServer
 
         public async Task<bool> PrintUrl()
         {
+            return await PrintUrl(this.Count);
+        }
+
+        public async Task<bool> PrintUrl(int pagecount)
+        {
             if (!string.IsNullOrEmpty(this.PrinterName))
             {
                 RequestFiles files = new RequestFiles(this.Url);
-                return await files.PrintStream(this.PrinterName, this.Printer);
+                return await files.PrintStream(this.PrinterName, this.Printer, pagecount);
             }
             else return false;
         }
 
         public void  PrintStream(Stream streamData)
         {
+            PrintStream(streamData, this.Count);
+        }
+
+        public void PrintStream(Stream streamData, int pagecount)
+        {
             if (streamData != null)
             {
-                this.Printer.PrintRawStream(this.PrinterName, streamData, "Web Server Raw Print");
+                this.Printer.PrintRawStream(this.PrinterName, streamData, "Web Server Raw Print", pagecount);
                 Console.WriteLine("printed stream data...");
             }
             else Console.WriteLine("no stream data to print...");
@@ -95,9 +114,14 @@ namespace WerServer
 
         public void PrintFile()
         {
+            PrintFile(this.Count);
+        }
+
+        public void PrintFile(int pagecount)
+        {
             try
             {
-                this.Printer.PrintRawFile(this.PrinterName, this.FilePath);
+                this.Printer.PrintRawFile(this.PrinterName, this.FilePath, pagecount);
                 Console.WriteLine($"printed file {this.FilePath}...");
             }
             catch (Exception ex)
@@ -109,9 +133,14 @@ namespace WerServer
 
         public void PrintFile(string filePath)
         {
+            PrintFile(1);
+        }
+
+        public void PrintFile(string filePath, int pagecount)
+        {
             try
             {
-                this.Printer.PrintRawFile(this.PrinterName, filePath);
+                this.Printer.PrintRawFile(this.PrinterName, filePath, pagecount);
                 Console.WriteLine($"printed file {filePath}...");
             }
             catch (Exception ex)

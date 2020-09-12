@@ -8,17 +8,52 @@ namespace RawPrint
     {
         public event JobCreatedHandler OnJobCreated;
 
+        public void PrintRawFile(string printer, string path)
+        {
+            PrintRawFile(printer, path, path, false, 1);
+        }
+
+        public void PrintRawFile(string printer, string path, int pagecount)
+        {
+            PrintRawFile(printer, path, path, false, pagecount);
+        }
+
         public void PrintRawFile(string printer, string path, bool paused)
         {
-            PrintRawFile(printer, path, path, paused);
+            PrintRawFile(printer, path, path, paused, 1);
+        }
+
+        public void PrintRawFile(string printer, string path, bool paused, int pagecount)
+        {
+            PrintRawFile(printer, path, path, paused, pagecount);
+        }
+
+        public void PrintRawFile(string printer, string path, string documentName)
+        {
+            PrintRawFile(printer, path, documentName, false, 1);
         }
 
         public void PrintRawFile(string printer, string path, string documentName, bool paused)
         {
-            using (var stream = File.OpenRead(path))
+            PrintRawFile(printer, path, documentName, paused, 1);
+        }
+
+        public void PrintRawFile(string printer, string path, string documentName, bool paused, int pagecount)
+        {
+            using (FileStream stream = File.OpenRead(path))
             {
-                PrintRawStream(printer, stream, documentName, paused);
+                PrintRawStream(printer, stream, documentName, paused, pagecount);
             }
+        }
+
+        public void PrintRawStream(string printer, Stream stream, string documentName)
+        {
+            PrintRawStream(printer, stream, documentName, false, 1);
+        }
+
+        public void PrintRawStream(string printer, Stream stream, string documentName, int pagecount)
+        {
+            PrintRawStream(printer, stream, documentName, false, pagecount);
         }
 
         public void PrintRawStream(string printer, Stream stream, string documentName, bool paused)
