@@ -49,7 +49,7 @@ EXAMPLE
 var data = new FormData();
 data.append(""url"", ""[url to request a file]"");
 
-$p.post('http://localhost:8888/?printer=[printer name]', function(data) {
+POST('http://localhost:8888/?printer=[printer name]', function(data) {
                 console.log(data);
             }, function(error) {
                 console.log(error);

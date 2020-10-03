@@ -24,9 +24,13 @@ data.append(""file"", ""[exact path with the file to print]"");     //if path no
 data.append(""count"", ""[number of copioes]"");                    //default 1 if it´s not send
 
 Get request with http://localhost:8888?printer=[printer name]&url[url file to print]
+
 Get request with http://localhost:8888?printer=[printer name]&url[url file to print]&count=3
+
 Get request with http://localhost:8888?printer=[printer name]&file[full path file to print]
+
 Get request with http://localhost:8888?printer=[printer name]&file[full path file to print]&count=3
+
 
 Post request with url http://localhost:8888 and the form data
 
@@ -37,16 +41,47 @@ data.append(""url"", ""[url with a document to print]"");           //if url not
 
 You can combine post data and get data. Printer property only can send once or in get variables or in post variables.
 
-EXAMPLE
+EXAMPLE TO USE
+        var dat = new FormData();
+        dat.append("url", "http://localhost/dat/Error.pdf");
 
-var data = new FormData();
-data.append("url", "[url to request a file]");
+        function POST(url, success, error, data) {
+            let xhr;            //control compatibilities
+            if (window.XMLHttpRequest) {
+                xhr = new XMLHttpRequest();
+            }
+            else {
+                xhr = new ActiveXObject("Microsoft.XMLHTTP");
+            }
+            let type = "POST";
+            let content = "application/json; charset=utf-8";
+            xhr.open(type, url, true);
+            xhr.setRequestHeader("Content-Type", content);
+            xhr.onload = function () {
+                if (xhr.status >= 200 && xhr.status <= 299) {
+                    if (success !== undefined && success !== null) ExternalFunc(success, dat);
+                }
+                else {
+                    if (error !== undefined && error !== null) ExternalFunc(error, xhr.statusText); 
+                }
+            };
+            xhr.onerror = function (e) {
+                console.error(e);
+                if (error !== undefined && error !== null) ExternalFunc(error, e);
+            };
+            xhr.ontimeout = function (t) {
+                console.error(t);
+                if (error !== undefined && error !== null) ExternalFunc(error, t);
+            };
+            if (data === null || data === undefined || data === '') xhr.send();
+            else xhr.send(data);
+        }
 
-$p.post('http://localhost:8888/?printer=[printer name]', function(data) {
-                console.log(data);
-            }, function(error) {
+        POST('http://localhost:8888/?printer=Microsoft Print to PDF', function (data) {
+            console.log(data);
+        }, function (error) {
                 console.log(error);
-            }, data, ""); 
+        }, dat);
 
 # Contributions from
 RAW PRINT are used on this project from https://github.com/frogmorecs/RawPrint but with a small changes. Thanks to the owner
