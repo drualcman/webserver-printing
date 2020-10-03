@@ -11,7 +11,25 @@ namespace WerServer
     {
         static void Main(string[] args)
         {
-            string help = @"From JAVASCRIPT or HTML FORM can send request to this server. Can use post, get or mix the 2 options on the request call like.
+            string help = @"Copyright (c) Frogmore Computer Services Ltd
+Copyright (c) 2020 DrUalcman Programación
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ""AS IS"" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED.IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+            LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+            ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+            (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+The views and conclusions contained in the software and documentation are those
+of the authors and should not be interpreted as representing official policies,
+either expressed or implied, of the FreeBSD Project.
+
+From JAVASCRIPT or HTML FORM can send request to this server. Can use post, get or mix the 2 options on the request call like.
 ARGUMENTS (all optional)
 PROTOCOL: HTTTP or HTTPS
 SERVER: LOCALHOST
@@ -22,6 +40,9 @@ PRINTER = Printer Name to use, this is REQUIRED
 URL = Url to request a file to print, PDF, or any other format, but not HTML page.
 FILE = Full path about some LOCAL FILE on the machine. This file must be exist on the local computer request to print, not in a server
 COUNT = Number of copies for the document. Default always 1
+
+FUNCTIONS
+printerlist = Get the printers installed on the computer
 
 //post data
 var data = new FormData();
@@ -42,36 +63,7 @@ var data = new FormData();
 data.append(""printer"", ""[printer name]"");
 data.append(""url"", ""[url with a document to print]"");           //if url not send path
 
-You can combine post data and get data. Printer property only can send once or in get variables or in post variables.
-
-EXAMPLE
-
-var data = new FormData();
-data.append(""url"", ""[url to request a file]"");
-
-POST('http://localhost:8888/?printer=[printer name]', function(data) {
-                console.log(data);
-            }, function(error) {
-                console.log(error);
-            }, data, ""); 
-
-Copyright (c) Frogmore Computer Services Ltd
-Copyright (c) 2020 DrUalcman Programación
-
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ""AS IS"" AND
-ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-DISCLAIMED.IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
-ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
-(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-            LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-            ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-            (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
-The views and conclusions contained in the software and documentation are those
-of the authors and should not be interpreted as representing official policies,
-either expressed or implied, of the FreeBSD Project.
+You can combine post data and get data. Property only can send once or in get variables or in post variables.
 ";
             Console.WriteLine(help);
 
