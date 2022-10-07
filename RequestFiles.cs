@@ -4,7 +4,7 @@ using System.IO;
 using System.Text;
 using System.Net.Http;
 using System.Threading.Tasks;
-using RawPrint;
+using System.Reflection;
 
 namespace WerServer
 {
@@ -29,7 +29,7 @@ namespace WerServer
             }
         }
 
-        public async Task<bool> PrintStream(string printerName, IPrinter printer)
+        public async Task<bool> PrintStream(string printerName)
         {
             bool result;
             using (HttpClient client = new HttpClient())
@@ -39,7 +39,7 @@ namespace WerServer
                     if (responseClient.IsSuccessStatusCode)
                     {
                         Stream streamFile = await responseClient.Content.ReadAsStreamAsync();
-                        printer.PrintRawStream(printerName, streamFile, "Web Server Raw Print");
+                        PrintPdf(printerName, 1, streamFile);
                         Console.WriteLine($"printed stream data from {this.Url}...");
                         result = true;
                     }
@@ -50,7 +50,7 @@ namespace WerServer
             return result;
         }
 
-        public async Task<bool> PrintStream(string printerName, IPrinter printer, int pagecount)
+        public async Task<bool> PrintStream(string printerName, int pagecount)
         {
             bool result;
             using (HttpClient client = new HttpClient())
@@ -60,7 +60,7 @@ namespace WerServer
                     if (responseClient.IsSuccessStatusCode)
                     {
                         Stream streamFile = await responseClient.Content.ReadAsStreamAsync();
-                        printer.PrintRawStream(printerName, streamFile, "Web Server Raw Print");
+                        PrintPdf(printerName, 1, streamFile);
                         Console.WriteLine($"printed stream data from {this.Url}...");
                         result = true;
                     }
@@ -70,5 +70,13 @@ namespace WerServer
             }
             return result;
         }
+
+
+        private bool PrintPdf(string printer, int copies, Stream stream)
+        {
+            var Print = new PDFium.PdfiumPrinterHelper();
+            return Print.PrintPDF(printer, copies, stream);
+        }
+
     }
 }

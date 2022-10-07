@@ -1,18 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
-
-using System.Runtime.InteropServices;
-using System.Windows;
 using System.IO;
-using RawPrint;
 using System.Threading.Tasks;
 
 namespace WerServer
 {
     public class WindowsPrint : IDisposable
-    {        
-        private IPrinter Printer = new Printer();
+    {
         private bool disposedValue;
         private string PrinterName;
         private int Count;
@@ -46,7 +40,7 @@ namespace WerServer
                 if (!string.IsNullOrEmpty(url)) SetUrl(url);
                 else Console.WriteLine("no url to request a file...");
             }
-            catch 
+            catch
             {
                 Console.WriteLine("no url to request a file...");
                 this.Url = null;
@@ -55,7 +49,7 @@ namespace WerServer
             {
                 this.FilePath = requestData.Find(x => x.Variable.ToLower() == "file").Valor;
             }
-            catch 
+            catch
             {
                 this.FilePath = string.Empty;
             }
@@ -92,12 +86,12 @@ namespace WerServer
             if (!string.IsNullOrEmpty(this.PrinterName))
             {
                 RequestFiles files = new RequestFiles(this.Url);
-                return await files.PrintStream(this.PrinterName, this.Printer, pagecount);
+                return await files.PrintStream(this.PrinterName, pagecount);
             }
             else return false;
         }
 
-        public void  PrintStream(Stream streamData)
+        public void PrintStream(Stream streamData)
         {
             PrintStream(streamData, this.Count);
         }
@@ -106,49 +100,12 @@ namespace WerServer
         {
             if (streamData != null)
             {
-                this.Printer.PrintRawStream(this.PrinterName, streamData, "Web Server Raw Print", pagecount);
+                PrintPdf(PrinterName, pagecount, streamData);
                 Console.WriteLine("printed stream data...");
             }
             else Console.WriteLine("no stream data to print...");
         }
 
-        public void PrintFile()
-        {
-            PrintFile(this.Count);
-        }
-
-        public void PrintFile(int pagecount)
-        {
-            try
-            {
-                this.Printer.PrintRawFile(this.PrinterName, this.FilePath, pagecount);
-                Console.WriteLine($"printed file {this.FilePath}...");
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"can't print {this.FilePath}");
-                throw new Exception($"can't print {this.FilePath}", ex);
-            }
-        }
-
-        public void PrintFile(string filePath)
-        {
-            PrintFile(1);
-        }
-
-        public void PrintFile(string filePath, int pagecount)
-        {
-            try
-            {
-                this.Printer.PrintRawFile(this.PrinterName, filePath, pagecount);
-                Console.WriteLine($"printed file {filePath}...");
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"can't print {filePath}");
-                throw new Exception($"can't print {filePath}", ex);
-            }
-        }
 
         #region Dispose
         protected virtual void Dispose(bool disposing)
@@ -157,7 +114,6 @@ namespace WerServer
             {
                 if (disposing)
                 {
-                    this.Printer = null;
                     this.PrinterName = null;
                     this.Url = null;
                     this.FilePath = null;
@@ -166,6 +122,14 @@ namespace WerServer
                 disposedValue = true;
             }
         }
+
+
+        private bool PrintPdf(string printer,int copies,Stream stream)
+        {
+            var Print = new PDFium.PdfiumPrinterHelper();
+            return Print.PrintPDF(printer, copies, stream);
+        }
+
 
         // TODO: override finalizer only if 'Dispose(bool disposing)' has code to free unmanaged resources
         ~WindowsPrint()
