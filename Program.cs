@@ -1,17 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Net;
-using System.Text;
+using WerServer.Handlers;
 
-namespace WerServer
+namespace WerServer;
+
+class Program
 {
-    class Program
+    static void Main(string[] args)
     {
-        static void Main(string[] args)
-        {
-            string help = @"Copyright (c) Frogmore Computer Services Ltd
+        string help = @"Copyright (c) Frogmore Computer Services Ltd
 Copyright (c) 2020 DrUalcman Programación
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ""AS IS"" AND
@@ -65,63 +63,62 @@ data.append(""url"", ""[url with a document to print]"");           //if url not
 
 You can combine post data and get data. Property only can send once or in get variables or in post variables.
 ";
-            Console.WriteLine(help);
+        Console.WriteLine(help);
 
-            WebServer web;
-            if (args.Length > 0)
+        WebServer web;
+        if(args.Length > 0)
+        {
+            string http = "http";
+            string server = "*";
+            List<int> ports = new List<int>();
+            List<string> prefixes = new List<string>();
+            foreach(string item in args)
             {
-                string http = "http";
-                string server = "*";
-                List<int> ports = new List<int>();
-                List<string> prefixes = new List<string>();
-                foreach (string item in args)
+                Uri test;
+                if(Uri.TryCreate(item, UriKind.Absolute, out test))
                 {
-                    Uri test;
-                    if (Uri.TryCreate(item, UriKind.Absolute, out test))
+                    if(item.IndexOf(":", item.IndexOf("://") + 1) < 0)
                     {
-                        if (item.IndexOf(":", item.IndexOf("://") + 1) < 0)
-                        {
-                            prefixes.Add(item + ":8888/");
-                        }
-                        else
-                        {
-                            if (item.IndexOf("http") < 0)
-                            {
-                                if (item.Substring(item.Length - 1, 1) == "/") prefixes.Add("http://" + item);
-                                else prefixes.Add("http://" + item + "/");
-                            }
-                            else
-                            {
-                                if (item.Substring(item.Length - 1, 1) == "/") prefixes.Add(item);
-                                else prefixes.Add(item + "/");
-                            }
-                        }
+                        prefixes.Add(item + ":8888/");
                     }
                     else
                     {
-                        int port;
-                        if (int.TryParse(item, out port)) ports.Add(port);
+                        if(item.IndexOf("http") < 0)
+                        {
+                            if(item.Substring(item.Length - 1, 1) == "/") prefixes.Add("http://" + item);
+                            else prefixes.Add("http://" + item + "/");
+                        }
                         else
                         {
-                            if (item.IndexOf("http") < 0) server = item;
-                            else http = item.Replace("://", "") + "://";
+                            if(item.Substring(item.Length - 1, 1) == "/") prefixes.Add(item);
+                            else prefixes.Add(item + "/");
                         }
                     }
                 }
-                if (ports.Count() > 0)
+                else
                 {
-                    foreach (int p in ports)
+                    int port;
+                    if(int.TryParse(item, out port)) ports.Add(port);
+                    else
                     {
-                        prefixes.Add(http + server.Replace(":", "") + ":" + p.ToString() + "/");
+                        if(item.IndexOf("http") < 0) server = item;
+                        else http = item.Replace("://", "") + "://";
                     }
                 }
-                else prefixes.Add(http + server.Replace(":", "") + ":8888/");
-                web = new WebServer(prefixes);
             }
-            else  
-                web = new WebServer();
-            
-            Console.WriteLine("Press CTRL+C to exit...");
+            if(ports.Count() > 0)
+            {
+                foreach(int p in ports)
+                {
+                    prefixes.Add(http + server.Replace(":", "") + ":" + p.ToString() + "/");
+                }
+            }
+            else prefixes.Add(http + server.Replace(":", "") + ":8888/");
+            web = new WebServer(prefixes);
         }
+        else
+            web = new WebServer();
+
+        Console.WriteLine("Press CTRL+C to exit...");
     }
 }
